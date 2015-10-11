@@ -101,6 +101,7 @@ public class XYZActivity extends AppCompatActivity {
 class xyzContainer{
     String text;
     String time;
+    int type;
 }
 
 /**
@@ -147,11 +148,26 @@ class xyzAdapter extends RecyclerView.Adapter<xyzAdapter.ViewHolder>{
         return mDataset.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        final xyzContainer xyz = mDataset.get(position);
+        return xyz.type;
+    }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
-        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_notification,parent,false);
+        switch (viewType){
+            case 0:
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_xyz_unread,parent,false);
+                break;
+            case 2:
+            case 1:
+            default:
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_xyz,parent,false);
+                break;
+        }
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
