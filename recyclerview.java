@@ -2,8 +2,12 @@
 
 public class XYZActivity extends AppCompatActivity {
 
+    private Activity ctx;
     private View promptView;
     private AlertDialog postDialog;
+    private RecyclerView xyzRecycler;
+    private List<xyzContainer> xyzs;
+    private xyzAdapter mRCYLAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -11,6 +15,35 @@ public class XYZActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notification);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // setup recyclerview , xyzRecycler defined in layout file
+        xyzRecycler = (RecyclerView) findViewById(R.id.xyzRecycler);
+        final LinearLayoutManager mRCYLLayoutManager = new LinearLayoutManager(this);
+        xyzRecycler.setLayoutManager(mRCYLLayoutManager);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                xyzs = buildList(); // Need to code this one on your own
+                mRCYLAdapter = new xyzAdapter(xyz,getSupportActionBar().getThemedContext());
+                // create data
+//                hLA = new highlightsListAdapter(datasetBuilder.highlights(c.getApplicationContext()));
+                ctx.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        hLV.setAdapter(hLA);
+                        // calculate height of recyclerview
+//                        int targetHeight = AppConstants.RECYCLER_VIEW_HEIGHT*mRCYLAdapter.getItemCount()+10;
+//                        mRCYLRecyclerView.getLayoutParams().height = targetHeight;
+                        mRCYLRecyclerView.setAdapter(mRCYLAdapter);
+                        mRCYLRecyclerView.scrollToPosition(contained.size() - 1);
+
+                        // mark thread read
+                        datasetBuilder.markRead(ctx, AppConstants.STRTYPE_CHAT, apiKey);
+                    }
+                });
+            }
+        }).start();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
